@@ -1377,21 +1377,18 @@
             document.querySelector("#rose-t").style.display = "flex";
             lineDrawing.play();
             
-            // Sau 4.5 giây thì chuyển sang giao diện thư
+            // Sau 4.5 giây thì chuyển sang giao diện thư và hiện SVG text animation cùng lúc
             setTimeout(() => {
                 document.querySelector("#rose-t").style.display = "none";
                 document.querySelector("#castle").style.display = "flex";
                 
-                // Sau thêm 2 giây nữa thì hiện SVG text animation
-                setTimeout(() => {
-                    document.getElementById('theSvg').style.display = 'block';
-                    // Không cần hiện .container vì SVG đã được hiện bằng theSvg
-                    
-                    // Kích hoạt SVG animation nếu có
-                    if (typeof startAnimation === 'function') {
-                        startAnimation();
-                    }
-                }, 2000);
+                // Hiện SVG text animation cùng lúc với bức thư
+                document.getElementById('theSvg').style.display = 'block';
+                
+                // Kích hoạt SVG animation ngay lập tức
+                if (typeof startAnimation === 'function') {
+                    startAnimation();
+                }
             }, 4500);
         }
 
