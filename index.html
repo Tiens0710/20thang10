@@ -995,7 +995,7 @@
     </div>
 
 
-    <div class="container" id="rose-t">
+    <div class="container" id="rose-t" style="display: none;">
         <svg viewBox="0 0 512 512">
             <path class="leafOne" d="M124.302,328.222c-2.466-2.901-5.036-5.334-7.648-7.212c-1.884-1.354-4.49-1.207-6.201,0.36
                                     c-32.608,29.866-18.892,84.017,24.01,94.752c2.251,0.563,4.612-0.548,5.624-2.636c0.407-0.841,0.781-1.732,1.138-2.648
@@ -1099,33 +1099,33 @@
     <script>
 
         (() => {
-            // Tự động chuyển sang giao diện chữ sau 5 giây (sau khi animation bông hoa chạy xong)
-            setTimeout(() => {
-                document.querySelector("#rose-t").style.display = "none";
-                document.querySelector("#castle").style.display = "flex";
-                document.querySelector("#theSvg").style.display = "inherit";
+            // Đã chuyển logic tự động sang function hideGiftOverlay() để trigger khi click vào hình
+            // setTimeout(() => {
+            //     document.querySelector("#rose-t").style.display = "none";
+            //     document.querySelector("#castle").style.display = "flex";
+            //     document.querySelector("#theSvg").style.display = "inherit";
 
-                rid = window.requestAnimationFrame(Typing);
-                function Typing() {
-                    rid = window.requestAnimationFrame(Typing);
-                    if (t >= 1) {
-                        window.cancelAnimationFrame(rid);
-                        rid = null;
-                    } else {
-                        t += 0.0025;
-                    }
+            //     rid = window.requestAnimationFrame(Typing);
+            //     function Typing() {
+            //         rid = window.requestAnimationFrame(Typing);
+            //         if (t >= 1) {
+            //             window.cancelAnimationFrame(rid);
+            //             rid = null;
+            //         } else {
+            //             t += 0.0025;
+            //         }
 
-                    lengthAtT = pathlength * t;
-                    for (index = 0; index < subpaths.length; index++) {
-                        if (subpaths[index].pathLength >= lengthAtT) {
-                            break;
-                        }
-                    }
-                    T = get_T(t, index);
-                    newPoints = getBezierPoints(T, subpaths[index].lastCubicBezier);
-                    drawCBezier(newPoints, partialPath, index);
-                }
-            }, 5000); // 5 giây
+            //         lengthAtT = pathlength * t;
+            //         for (index = 0; index < subpaths.length; index++) {
+            //             if (subpaths[index].pathLength >= lengthAtT) {
+            //                 break;
+            //             }
+            //         }
+            //         T = get_T(t, index);
+            //         newPoints = getBezierPoints(T, subpaths[index].lastCubicBezier);
+            //         drawCBezier(newPoints, partialPath, index);
+            //     }
+            // }, 5000); // 5 giây
             
             const head = document.getElementsByTagName('head')[0];
             let animationId = 1;
@@ -1204,7 +1204,7 @@
         // .textLetter text h2
         let indexText = 0;
         let textLetter = document.querySelector('.textLetter h2');
-        const textLetterH2 = "Gửi cậu!";
+        const textLetterH2 = "Gửi em!";
         let timoutTextLetter;
 
         function textCharLetter() {
@@ -1340,16 +1340,59 @@
                 rose4.setAttribute("fill", "#D86666");
                 rose4.setAttribute("stroke", "none");
             },
-            autoplay: true,
+            autoplay: false,
         });
 
-        // Function để ẩn giao diện tặng nè và hiện giao diện SVG
+        // Function để bắt đầu SVG text animation
+        function startAnimation() {
+            if (typeof rid !== 'undefined') {
+                rid = window.requestAnimationFrame(Typing);
+                function Typing() {
+                    rid = window.requestAnimationFrame(Typing);
+                    if (t >= 1) {
+                        window.cancelAnimationFrame(rid);
+                        rid = null;
+                    } else {
+                        t += 0.0025;
+                    }
+
+                    lengthAtT = pathlength * t;
+                    for (index = 0; index < subpaths.length; index++) {
+                        if (subpaths[index].pathLength >= lengthAtT) {
+                            break;
+                        }
+                    }
+                    T = get_T(t, index);
+                    newPoints = getBezierPoints(T, subpaths[index].lastCubicBezier);
+                    drawCBezier(newPoints, partialPath, index);
+                }
+            }
+        }
+
+        // Function để ẩn giao diện tặng nè và hiện bông hoa
         function hideGiftOverlay() {
             document.getElementById('giftOverlay').style.display = 'none';
-            // Hiện giao diện SVG text animation
-            document.getElementById('theSvg').style.display = 'block';
-            // Kích hoạt animation SVG text
-            document.querySelector('.container').style.display = 'flex';
+            
+            // Hiện bông hoa luôn khi click vào hình
+            document.querySelector("#rose-t").style.display = "flex";
+            lineDrawing.play();
+            
+            // Sau 4.5 giây thì chuyển sang giao diện thư
+            setTimeout(() => {
+                document.querySelector("#rose-t").style.display = "none";
+                document.querySelector("#castle").style.display = "flex";
+                
+                // Sau thêm 2 giây nữa thì hiện SVG text animation
+                setTimeout(() => {
+                    document.getElementById('theSvg').style.display = 'block';
+                    // Không cần hiện .container vì SVG đã được hiện bằng theSvg
+                    
+                    // Kích hoạt SVG animation nếu có
+                    if (typeof startAnimation === 'function') {
+                        startAnimation();
+                    }
+                }, 2000);
+            }, 4500);
         }
 
     </script>
